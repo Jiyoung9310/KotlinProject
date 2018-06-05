@@ -1,6 +1,6 @@
 package com.example.hello.crosstest;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * Created by XNOTE on 2018-06-05.
@@ -38,10 +38,10 @@ public class Model {
         }
     }
 
-    Document documents;
+    ArrayList<Document> documents;
     class Document {
         String collection;// "blog",
-        Date datetime;// "2014-10-29T22:15:00.000+09:00",
+        String datetime;// "2014-10-29T22:15:00.000+09:00",
         int height;//:339,
         int width;// 510,
         String thumbnail_url;// "https://search3.kakaocdn.net/argon/130x130_85_c/Ca9K0s3wDWo",
@@ -57,11 +57,11 @@ public class Model {
             this.collection = collection;
         }
 
-        public Date getDatetime() {
+        public String getDatetime() {
             return datetime;
         }
 
-        public void setDatetime(Date datetime) {
+        public void setDatetime(String datetime) {
             this.datetime = datetime;
         }
 
@@ -112,5 +112,21 @@ public class Model {
         public void setDoc_url(String doc_url) {
             this.doc_url = doc_url;
         }
+    }
+
+    public Meta getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Meta meta) {
+        this.meta = meta;
+    }
+
+    public ArrayList<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(ArrayList<Document> documents) {
+        this.documents = documents;
     }
 }
