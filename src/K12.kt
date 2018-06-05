@@ -1,0 +1,44 @@
+// 람다, 인라인 : 코틀린만의 특성
+fun main(args: Array<String>) {
+    // { 매개변수       -> 함수본체 }
+    // { x: Int, y: Int -> x + y }
+    val arr: List<PersonEx> = listOf(
+            PersonEx("A", 30),
+            PersonEx("B", 31),
+            PersonEx("C", 10)
+    )
+    printPerson( arr )
+
+    doWhat({ println("f() call") }, { println("f2() call") })
+}
+
+class PersonEx(val name: String, val age: Int) {
+    val bigHuman = age > 30
+
+}
+
+fun printPerson( pe: List<PersonEx> ) {
+    // 코틀린 라이브러리 + 람다
+    // bigHuman이 참인 녀석들의 이름을 출력하시오
+    // it : 매개변수 참조 시
+    pe.filter({ pe -> pe.bigHuman}).forEach { println("큰 녀석의 이름은? ${it.name}") }
+
+    // 멤버 참조(::)를 사용하면 bigHuman 속성을 직접 대입할 수 있다.
+    pe.filter( PersonEx::bigHuman ).forEach { println("큰 녀석의 이름은? ${it.name}") }
+
+    // 함수 호출 시 마지막 인자가 함수이고, 함수 표현을 람다로 한다면
+    // 소괄호 생략 가능
+    pe.filter{ pe -> pe.bigHuman }.forEach { println("큰 녀석의 이름은? ${it.name}") }
+
+    // 람다 표현식에서 사용하는 매개변수가 많은 경우, 그중에서 사용안하는 놈은 _ 로 처리 가능
+
+}
+// 람다 표현식은 자바에서 익명 클래스로 치환됨
+// 익명 클래스 코드가 사용될 때마다 매번 객체가 생성되는 문제 -> 성능 저하의 원인이 될 수도 있다.
+// -> 인라인 -> 함수 매개변수를 받았을 때 함수 본체가 그대로 거기에 들어간다
+// f()는 인라인 처리, f2()는 익명 클래스 처리
+inline fun doWhat( f:() -> Unit, noinline f2:()-> Unit ) {
+    println("1")
+    f2()
+    f()
+}
