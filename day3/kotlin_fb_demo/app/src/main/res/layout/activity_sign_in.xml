@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SignInActivity">
+
+    <!--이미지 : 카메라나 포토앨범 이미지를 세팅-->
+    <ImageView
+        android:id="@+id/profile"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/logo"/>
+    <!--이메일 + 비번 입력창-->
+    <LinearLayout
+        android:id="@+id/layout_email_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/profile"
+        android:layout_marginBottom="16dp">
+        <EditText
+            android:id="@+id/field_email"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/email_input"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"/>
+        <EditText
+            android:id="@+id/field_password"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/psw_input"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+    <!--로그인 + 회원가입 버튼-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/layout_email_password">
+        <Button
+            android:id="@+id/btn_sign_in"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in_btn"/>
+        <Button
+            android:id="@+id/btn_sign_up"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_btn"/>
+    </LinearLayout>
+
+
+</RelativeLayout>
