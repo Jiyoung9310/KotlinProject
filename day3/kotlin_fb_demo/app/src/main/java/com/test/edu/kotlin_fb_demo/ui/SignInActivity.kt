@@ -1,6 +1,7 @@
 package com.test.edu.kotlin_fb_demo.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
@@ -8,13 +9,24 @@ import android.text.TextUtils.indexOf
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.miguelbcr.ui.rx_paparazzo2.RxPaparazzo
+import com.miguelbcr.ui.rx_paparazzo2.entities.size.ScreenSize
+import com.miguelbcr.ui.rx_paparazzo2.entities.size.SmallSize
+import com.squareup.picasso.Picasso
 import com.test.edu.kotlin_fb_demo.R
 import com.test.edu.kotlin_fb_demo.models.User
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import java.io.File
 import kotlin.math.sign
 
 class SignInActivity : RootActivity(), View.OnClickListener {
@@ -35,6 +47,8 @@ class SignInActivity : RootActivity(), View.OnClickListener {
         //버튼 이벤트
         btn_sign_in.setOnClickListener(this)
         btn_sign_up.setOnClickListener(this)
+        // 사진을 클릭하면 호출
+        profile.setOnClickListener(this)
     }
 
     override fun onStart() {
@@ -52,9 +66,11 @@ class SignInActivity : RootActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         //btn_sign_in 누르면 sign_in()호출
         //btn_sign_up 누르면 sign_up()호출
+        //profile 누르면 프로필 사진 넣기
         when( v?.id ?: -1) {
             R.id.btn_sign_in -> sign_in()
             R.id.btn_sign_up -> sign_up()
+            R.id.profile -> getPicture()
         }
     }
 
@@ -158,5 +174,49 @@ class SignInActivity : RootActivity(), View.OnClickListener {
         // /users/uid(유저의 익명아이디)/유저정보(구조)
         mDataBase.child("users").child(uid).setValue(user)
                 .addOnCompleteListener(this) { task -> Log.i(TAG, "디비 입력결과 ${task.isSuccessful}") }
+    }
+
+    // 카메라 띄우기(갤러리, 파일 경로) - 크롭 - 파일로 다운 - 업로드 - 다운로드 URL 획득
+    fun getPicture() {
+        RxPaparazzo.single(this)
+                .crop() //편집기능
+                .size(SmallSize()) //해상도 조절
+                .usingCamera()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    // 파일 경로
+                    response -> Log.i(TAG, "파일 경로 : "+ response.data().file.toString())
+                    uploadFile(response.data().file)
+                }
+    }
+
+    // 입력원이 파일 -> 업로드
+    fun uploadFile(file: File) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference // (root)/
+        // 파일 uri 객체
+        val uri = Uri.fromFile(file)
+        // 업로드할 파일의 경로
+        val uRef = storageRef.child("thumb/${uri.lastPathSegment}")
+        uRef.putFile(uri)
+                .continueWithTask { task ->
+                    // 다운로드 URL 요청
+                    uRef.downloadUrl
+                }
+                .addOnCompleteListener { task ->
+                    if(task.isSuccessful) {
+                        Log.i(TAG, "업로드 결과 : "+ task.result.toString())
+                        Toast.makeText(this@SignInActivity, "업로드 되었습니다.", Toast.LENGTH_SHORT).show()
+                        setThumb(task.result.toString())
+                    } else {
+                        Toast.makeText(this@SignInActivity, "업로드 실패 : " + task.result, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+    }
+
+    fun setThumb(url: String) {
+        Picasso.get().load(url).into(profile)
     }
 }

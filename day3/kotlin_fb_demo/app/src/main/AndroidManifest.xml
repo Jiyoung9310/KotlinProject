@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.test.edu.kotlin_fb_demo">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <!-- firebase는 기본적으로 통신 퍼미션을 필요로 하지 않는다. -->
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -25,7 +28,19 @@
         <activity
             android:name=".ui.NewPostActivity"
             android:label="@string/title_activity_new_post"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.PostDetailActivity"></activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.file_provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths"/>
+        </provider>
+
     </application>
 
 </manifest>
